@@ -236,7 +236,9 @@
   }
   const CHEF_LOOK = { skin: '#eab88a', hair: '#2a2220', hs: 'chef', top: '#fbfbf6', bottom: '#3a3a4a', apron: '#e8e8e0' };
   const STOOLS = [110, 162, 214];
-  const ext = { staff: { x: 120, tx: 120, carry: false, wait: 0, walk: 0, seat: -1 }, seats: STOOLS.map(x => ({ x, st: 'empty', cd: rnd(0.5, 3) })), smoke: [], plates: [] };
+  const PRESEAT = [LOOKS[1], LOOKS[5], LOOKS[4]];
+  const ext = { staff: { x: 120, tx: 120, carry: false, wait: 0, walk: 0, seat: -1 }, seats: STOOLS.map((x, i) => [{ x, st: 'eat', t: 3.4, bites: 1 }, { x, st: 'wait', t: 0.5 }, { x, st: 'eat', t: 6.5, bites: 3 }][i]), smoke: [], plates: [] };
+  ext.seats.forEach((se, i) => (se.look = PRESEAT[i]));
   function drawShopLife(c) {
     const th = s.info.theme, t = s.t;
     // chef at the grill (back) + grill smoke
@@ -281,10 +283,10 @@
     ext.smoke.forEach(m => { m.t += dt; m.y -= 12 * dt; m.r += dt; }); ext.smoke = ext.smoke.filter(m => m.t < m.life);
     ext.seats.forEach((se, i) => {
       se.t = (se.t || 0) + dt;
-      if (se.st === 'empty') { se.cd -= dt; if (se.cd <= 0) { const dir = Math.random() < 0.5 ? 1 : -1; Object.assign(se, { st: 'walk', look: pick(LOOKS), px: dir > 0 ? -12 : W + 12, py: 256, walk: 0, t: 0 }); } }
-      else if (se.st === 'walk') { const d = se.x - se.px; se.walk += dt; se.px += Math.sign(d) * Math.min(Math.abs(d), 36 * dt); if (Math.abs(d) < 1) { se.st = 'wait'; se.t = 0; } }
-      else if (se.st === 'eat') { if (se.t > 1.6 * (se.bites + 1) && se.bites < 4) se.bites++; if (se.t > 9) { se.st = 'leave'; se.px = se.x; se.py = 256; se.walk = 0; se.dir = Math.random() < 0.5 ? 1 : -1; } }
-      else if (se.st === 'leave') { se.walk += dt; se.px += se.dir * 36 * dt; if (se.px < -16 || se.px > W + 16) { se.st = 'empty'; se.cd = rnd(1.5, 5); } }
+      if (se.st === 'empty') { se.cd -= dt; if (se.cd <= 0) Object.assign(se, { st: 'walk', look: pick(LOOKS), px: se.x < 180 || Math.random() < 0.5 ? -12 : W + 12, py: 256, walk: 0, t: 0, dur: rnd(10, 16) }); }
+      else if (se.st === 'walk') { const d = se.x - se.px; se.walk += dt; se.px += Math.sign(d) * Math.min(Math.abs(d), 60 * dt); if (Math.abs(d) < 1) { se.st = 'wait'; se.t = 0; } }
+      else if (se.st === 'eat') { if (se.t > 1.6 * (se.bites + 1) && se.bites < 4) se.bites++; if (se.t > (se.dur || 12)) { se.st = 'leave'; se.px = se.x; se.py = 256; se.walk = 0; se.dir = Math.random() < 0.5 ? 1 : -1; } }
+      else if (se.st === 'leave') { se.walk += dt; se.px += se.dir * 50 * dt; if (se.px < -16 || se.px > W + 16) { se.st = 'empty'; se.cd = rnd(0.3, 1.5); } }
     });
     // server: take a burger to whoever is waiting, then wander
     if (st.wait > 0) { st.wait -= dt; if (st.wait <= 0 && st.carry) { const se = ext.seats[st.seat]; st.carry = false; if (se && se.st === 'wait') { se.st = 'eat'; se.t = 0; se.bites = 0; } st.seat = -1; st.tx = rnd(90, 200); } return; }
