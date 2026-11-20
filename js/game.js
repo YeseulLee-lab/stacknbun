@@ -220,7 +220,7 @@
     R(c, dx + 16, dy + 14, 22, 10, INK); R(c, dx + 17, dy + 15, 20, 8, th.trim2); T(c, 'OPEN', dx + 27, dy + 15, 8, '#2a1a08', null, 'c');
     // plant + crates
     pottedPlant(c, 283, 234);
-    for (let i = 0; i < 3; i++) { const y = 234 - (i + 1) * 15; R(c, 26, y, 42, 15, INK); R(c, 27, y + 1, 40, 13, '#d8302a'); for (let x = 31; x < 66; x += 6) R(c, x, y + 2, 2, 5, '#a01e1a'); R(c, 29, y + 9, 36, 3, '#f4f0e8'); }
+    for (let i = 0; i < 3; i++) { const y = 234 - (i + 1) * 15; R(c, 26, y, 42, 15, INK); R(c, 27, y + 1, 40, 13, '#d8302a'); for (let x = 30; x < 66; x += 5) R(c, x, y + 1, 2, 2, '#a01e1a'); T(c, 'Cola', 47, y + 4, 8, '#fff6e8', '#8a1410', 'c'); }
     // diamond-plate step
     R(c, 14, 234, 350, 14, '#b8bec6'); R(c, 14, 234, 350, 1, '#e8ecf0');
     for (let y = 236, r = 0; y < 246; y += 3, r++) for (let x = 16 + (r % 2) * 4; x < 362; x += 8) { R(c, x, y, 2, 1, '#e8ecf0'); R(c, x + 1, y + 1, 2, 1, '#8a929c'); }
