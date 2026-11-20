@@ -149,6 +149,15 @@
     R(c, x - 6, y - 12, 13, 1, '#a8b0ba');
     disc(c, x, y - 27, 11, 4, INK); disc(c, x, y - 28, 10, 3, '#e0302a'); R(c, x - 6, y - 30, 7, 1, '#ff7a6a'); R(c, x - 10, y - 26, 21, 2, '#a01e1a');
   }
+  function pottedPlant(c, x, y) { // terracotta pot with a leafy bush; (x, y) = bottom centre
+    const leaves = [[-7, -22, 5, 3, '#2e8a3a'], [6, -24, 5, 3, '#2e8a3a'], [-4, -28, 4, 4, '#3aa84a'], [3, -30, 4, 4, '#3aa84a'], [0, -22, 6, 5, '#46b852'], [-8, -16, 4, 3, '#3aa84a'], [8, -17, 4, 3, '#3aa84a'], [-2, -34, 3, 3, '#5ac860']];
+    leaves.forEach(([dx, dy, rx, ry]) => disc(c, x + dx, y + dy, rx + 1, ry + 1, INK));
+    leaves.forEach(([dx, dy, rx, ry, col]) => { disc(c, x + dx, y + dy, rx, ry, col); R(c, x + dx - 1, y + dy - ry + 1, 2, 1, '#8ee07a'); });
+    R(c, x, y - 18, 1, 6, '#2a6a2a');
+    poly(c, [[x - 9, y - 13], [x + 9, y - 13], [x + 7, y], [x - 7, y]], INK);
+    poly(c, [[x - 8, y - 12], [x + 8, y - 12], [x + 6, y - 1], [x - 6, y - 1]], '#d0703a');
+    R(c, x - 9, y - 14, 18, 4, INK); R(c, x - 8, y - 13, 16, 2, '#e08850'); R(c, x - 5, y - 9, 2, 6, '#e8905a'); R(c, x - 6, y - 2, 12, 1, '#a8502a');
+  }
   function paintExterior() {
     if (!extCv) { extCv = document.createElement('canvas'); extCv.width = W; extCv.height = H; }
     const c = extCv.getContext('2d'), th = s.info.theme;
@@ -166,15 +175,10 @@
     R(c, 0, 56, W, 16, '#2e6a52'); R(c, 0, 56, W, 2, '#4a9a72'); R(c, 0, 71, W, 1, INK);
     // neighbours
     R(c, 0, 72, 22, 178, '#f2efe6'); R(c, 2, 120, 16, 50, '#d8352a'); R(c, 4, 122, 12, 46, '#fff6e0');
-    R(c, 358, 72, 122, 178, '#8a5a34');
-    for (let y = 76; y < 250; y += 8) { R(c, 358, y, 122, 1, '#6a4224'); }
-    for (let x = 362; x < 480; x += 30) R(c, x, 72, 1, 178, '#6a4224');
-    poly(c, [[352, 112], [480, 104], [480, 140], [360, 150]], '#c8a868');
-    for (let x = 356; x < 480; x += 3) R(c, x, 110 + (x % 7), 1, 36 - (x % 5), x % 2 ? '#a88a50' : '#dcc088');
-    R(c, 380, 160, 70, 60, INK); R(c, 382, 162, 66, 56, '#d8a868'); R(c, 384, 164, 62, 26, '#ffd890'); R(c, 384, 192, 62, 24, '#c89058');
-    // hanging blade sign
-    R(c, 452, 76, 24, 2, '#3a3a3a'); R(c, 456, 78, 20, 40, INK); R(c, 457, 79, 18, 38, '#fbfaf4');
-    T(c, 'そ', 466, 84, 10, '#2a2a2a', null, 'c'); T(c, 'ば', 466, 98, 10, '#2a2a2a', null, 'c');
+    R(c, 358, 72, 122, 178, '#e6e0d4');
+    for (let y = 80; y < 250; y += 10) R(c, 358, y, 122, 1, '#d8d2c6');
+    R(c, 358, 72, 3, 178, '#cfc8ba'); R(c, 372, 72, 4, 178, '#b8b2a6'); R(c, 373, 72, 1, 178, '#d8d2c6');
+    for (let y = 100; y < 250; y += 40) R(c, 370, y, 8, 2, '#a8a296');
     // main signboard
     const sx = 30, sy = 62, sw = 320, sh = 60;
     R(c, sx - 2, sy - 2, sw + 4, sh + 4, '#b8b8b0'); R(c, sx - 1, sy - 1, sw + 2, sh + 2, INK); R(c, sx, sy, sw, sh, '#fbfaf4');
@@ -215,7 +219,7 @@
     R(c, dx + 4, dy + 40, dw - 8, 3, '#e4e8ec'); R(c, dx + 4, dy + 42, dw - 8, 1, '#8a929c');
     R(c, dx + 16, dy + 14, 22, 10, INK); R(c, dx + 17, dy + 15, 20, 8, th.trim2); T(c, 'OPEN', dx + 27, dy + 15, 8, '#2a1a08', null, 'c');
     // plant + crates
-    R(c, 278, 214, 10, 20, INK); R(c, 279, 215, 8, 18, '#f4f4f0'); disc(c, 283, 206, 8, 9, INK); disc(c, 283, 206, 7, 8, '#3a9a3a'); disc(c, 280, 202, 3, 3, '#6ad05a');
+    pottedPlant(c, 283, 234);
     for (let i = 0; i < 3; i++) { const y = 234 - (i + 1) * 15; R(c, 26, y, 42, 15, INK); R(c, 27, y + 1, 40, 13, '#d8302a'); for (let x = 31; x < 66; x += 6) R(c, x, y + 2, 2, 5, '#a01e1a'); R(c, 29, y + 9, 36, 3, '#f4f0e8'); }
     // diamond-plate step
     R(c, 14, 234, 350, 14, '#b8bec6'); R(c, 14, 234, 350, 1, '#e8ecf0');
@@ -230,16 +234,68 @@
     if (s.eve) { c.fillStyle = 'rgba(60,30,100,0.28)'; c.fillRect(0, 0, W, H); c.save(); c.globalCompositeOperation = 'lighter'; disc(c, 174, 176, 110, 30, 'rgba(255,170,80,0.18)'); c.restore(); }
     dirtyExt = false;
   }
+  const CHEF_LOOK = { skin: '#eab88a', hair: '#2a2220', hs: 'chef', top: '#fbfbf6', bottom: '#3a3a4a', apron: '#e8e8e0' };
+  const STOOLS = [110, 162, 214];
+  const ext = { staff: { x: 120, tx: 120, carry: false, wait: 0, walk: 0, seat: -1 }, seats: STOOLS.map(x => ({ x, st: 'empty', cd: rnd(0.5, 3) })), smoke: [], plates: [] };
+  function drawShopLife(c) {
+    const th = s.info.theme, t = s.t;
+    // chef at the grill (back) + grill smoke
+    const cx = 232, cb = Math.floor(t * 4) % 2;
+    chibi(c, cx, 197, CHEF_LOOK, { back: true, step: cb });
+    ext.smoke.forEach(m => { c.globalAlpha = clamp(0.6 * (1 - m.t / m.life), 0, 1); disc(c, m.x, m.y, m.r, m.r, '#f6f4f0'); c.globalAlpha = 1; });
+    // server walking behind the counter with a burger
+    const st = ext.staff, sl = { skin: '#f2c79a', hair: '#3a2420', hs: 'cap', cap: th.trim, top: th.trim, apron: '#fff4e0', bottom: '#3a3a4a' };
+    chibi(c, st.x, 199, sl, { step: Math.abs(st.tx - st.x) > 1 ? Math.floor(st.walk * 6) % 2 : 0, mood: st.wait > 0 ? 'happy' : null });
+    if (st.carry) A.burger(c, st.x + 8, 193 - (st.wait > 0 ? 2 : 0), 10, [th.mid, 'cheese', 'lettuce'], 0.6);
+  }
+  function drawDiner(c, se) {
+    const th = s.info.theme;
+    if (se.st === 'walk' || se.st === 'leave') { disc(c, se.px, se.py, 6, 2, 'rgba(0,0,0,.15)'); chibi(c, se.px, se.py, se.look, { step: Math.floor(se.walk * 6) % 2, mood: se.st === 'leave' ? 'happy' : null }); return; }
+    const x = se.x, y = 214;
+    R(c, x - 4, y - 1, 3, 7, INK); R(c, x + 1, y - 1, 3, 7, INK); R(c, x - 3, y, 1, 5, se.look.bottom); R(c, x + 2, y, 1, 5, se.look.bottom);
+    const ph = se.st === 'eat' ? (se.t % 1.6) / 1.6 : 1, biting = ph < 0.25;
+    chibi(c, x, y, se.look, { sit: true, mood: se.st === 'eat' ? (biting ? 'happy' : null) : null });
+    if (se.st === 'wait') { bubble(c, x + 4, y - 32, 15, 12); A.burger(c, x + 11, y - 22, 8, [th.mid], 0.5); }
+    if (se.st === 'eat') {
+      const left = 4 - se.bites;
+      if (left > 0) A.burger(c, x + (biting ? 4 : 8), y - (biting ? 6 : 3), 4 + left * 2, left > 2 ? [th.mid, 'cheese', 'lettuce'] : [th.mid], 0.5);
+      if (biting && se.bites < 4) { R(c, x - 6, y - 12, 1, 1, '#f7a43a'); R(c, x + 6, y - 11, 1, 1, '#f7a43a'); }
+      if (se.bites >= 4) heart(c, x - 3, y - 27);
+    }
+  }
   function drawExterior(c) {
     if (dirtyExt) paintExterior();
     c.drawImage(extCv, 0, 0);
+    drawShopLife(c);
+    c.drawImage(extCv, 60, 194, 226, 42, 60, 194, 226, 42); // counter top + bar front hide the staff's legs
+    ext.seats.forEach(se => { if (se.st !== 'empty') drawDiner(c, se); });
     s.peds.slice().sort((a, b) => a.y - b.y).forEach(p => { disc(c, p.x, p.y, 6, 2, 'rgba(0,0,0,.15)'); chibi(c, p.x, p.y, p.look, { back: p.back, step: Math.floor(p.walk * 6) % 2 }); });
     if (s.panel && s.panel.kind === 'open' && !s.trans) {
       const b = Math.floor(s.t * 3) % 2;
       T(c, '▼', DOOR_PT[0], DOOR_RECT[1] - 14 + b, 10, '#ffe27a', INK, 'c');
     }
   }
+  function updShopLife(dt) {
+    const st = ext.staff;
+    if (Math.random() < dt * 3) ext.smoke.push({ x: rnd(205, 255), y: 176, r: rnd(2, 3), t: 0, life: rnd(0.8, 1.4) });
+    ext.smoke.forEach(m => { m.t += dt; m.y -= 12 * dt; m.r += dt; }); ext.smoke = ext.smoke.filter(m => m.t < m.life);
+    ext.seats.forEach((se, i) => {
+      se.t = (se.t || 0) + dt;
+      if (se.st === 'empty') { se.cd -= dt; if (se.cd <= 0) { const dir = Math.random() < 0.5 ? 1 : -1; Object.assign(se, { st: 'walk', look: pick(LOOKS), px: dir > 0 ? -12 : W + 12, py: 256, walk: 0, t: 0 }); } }
+      else if (se.st === 'walk') { const d = se.x - se.px; se.walk += dt; se.px += Math.sign(d) * Math.min(Math.abs(d), 36 * dt); if (Math.abs(d) < 1) { se.st = 'wait'; se.t = 0; } }
+      else if (se.st === 'eat') { if (se.t > 1.6 * (se.bites + 1) && se.bites < 4) se.bites++; if (se.t > 9) { se.st = 'leave'; se.px = se.x; se.py = 256; se.walk = 0; se.dir = Math.random() < 0.5 ? 1 : -1; } }
+      else if (se.st === 'leave') { se.walk += dt; se.px += se.dir * 36 * dt; if (se.px < -16 || se.px > W + 16) { se.st = 'empty'; se.cd = rnd(1.5, 5); } }
+    });
+    // server: take a burger to whoever is waiting, then wander
+    if (st.wait > 0) { st.wait -= dt; if (st.wait <= 0 && st.carry) { const se = ext.seats[st.seat]; st.carry = false; if (se && se.st === 'wait') { se.st = 'eat'; se.t = 0; se.bites = 0; } st.seat = -1; st.tx = rnd(90, 200); } return; }
+    if (st.seat < 0) { const i = ext.seats.findIndex(se => se.st === 'wait' && se.t > 1); if (i >= 0) { st.seat = i; st.carry = true; st.tx = ext.seats[i].x; } }
+    const d = st.tx - st.x;
+    if (Math.abs(d) > 1) { st.x += Math.sign(d) * Math.min(Math.abs(d), 45 * dt); st.walk += dt; }
+    else if (st.carry) st.wait = 0.6;
+    else if (Math.random() < dt * 0.4) st.tx = rnd(90, 200);
+  }
   function updExterior(dt) {
+    updShopLife(dt);
     s.pedT -= dt;
     if (s.pedT <= 0) {
       s.pedT = rnd(0.8, 2.0);
@@ -722,9 +778,8 @@
       const px = 364, pw = 112;
       frame(c, px, 150, pw, 112, 'rgba(36,22,20,.92)', '#8a5530');
       T(c, '햄버거 쌓기 타이쿤', px + pw / 2, 157, 10, '#ffd27a', null, 'c');
-      T(c, '↑↓←→ + SPACE', px + pw / 2, 171, 8, '#e6cf9c', null, 'c');
-      items.forEach((it, i) => { const y = 186 + i * 24; button(c, px + 14, y, pw - 28, 18, it.label, it.kind, p.sel === i); s.hits.push({ x: px + 14, y, w: pw - 28, h: 18, act: () => { p.sel = i; it.act(); } }); });
-      T(c, 'SPACE로 선택', px + pw / 2, 238, 8, '#b89a78', null, 'c');
+      items.forEach((it, i) => { const y = 178 + i * 24; button(c, px + 14, y, pw - 28, 18, it.label, it.kind, p.sel === i); s.hits.push({ x: px + 14, y, w: pw - 28, h: 18, act: () => { p.sel = i; it.act(); } }); });
+      T(c, 'SPACE로 선택', px + pw / 2, 234, 8, '#b89a78', null, 'c');
       T(c, '마우스·터치도 OK', px + pw / 2, 249, 8, '#8a7a68', null, 'c');
       return;
     }
