@@ -350,6 +350,12 @@
     // walks in through the door on the right edge of the counter view
     const cu = { id: s.idSeq++, look, special, st: 'in', arrived: false, walk: 0, moving: false, sayT: 0, cvx: W + 24 };
     cu.order = makeOrder(info, special);
+    // heads-up the first time a special guest shows up in a day
+    if (special && s.biz && !(s.biz.seen = s.biz.seen || {})[special]) {
+      s.biz.seen[special] = true;
+      s.banner = special === 'double' ? { text: '특별 손님 등장!', sub: '더블 패티광 · 재료 10개 · 팁 3배', col: '#ffe03a', t: 0, dur: 2.6 } : { text: '특별 손님 등장!', sub: '급한 직장인 · 인내심 절반 · 팁 2배', col: '#ffe03a', t: 0, dur: 2.6 };
+      sfx('bell');
+    }
     const n = cu.order.length;
     cu.patMax = cu.pat = (14 + 3 * n) * Math.max(0.6, Math.pow(0.97, info.n - 1)) * (1 + 0.1 * P.up.interior) * (special === 'rush' ? 0.5 : 1);
     cu.price = Math.round((20 + 8 * n + cu.order.reduce((a, i) => a + Math.max(0, COST[i] - 2) * 2, 0)) * (1 + 0.15 * P.up.menu));
@@ -558,6 +564,7 @@
       const bob = cu.moving && Math.floor(cu.walk * 8) % 2 ? 3 : 0;
       const mood = !cu.arrived ? null : cu.sayT > 0 ? 'happy' : r < 0.33 ? (Math.floor(t * 3) % 2 ? 'angry' : 'sweat') : null;
       chibi(c, x - 14, 100 - bob, cu.look, { s: 3, mood, back: false, step: bob ? 1 : 0 });
+      if (cu.special) specialMark(c, x - 14, 100 - bob - 64, cu.special);
     });
     s.fxC.filter(f => f.k === 'leave').forEach(f => {
       const x = Math.round(f.x + f.t * 220), bob = Math.floor(f.t * 8) % 2 ? 3 : 0;
@@ -630,6 +637,15 @@
       if (Math.floor(t * 8 + i * 3) % 3 === 0) { R(c, px - 9, py - 4, 1, 1, '#ffd27a'); R(c, px + 9, py - 2, 1, 1, '#ffd27a'); }
     }
     s.smoke.forEach(m => { c.globalAlpha = clamp((1 - m.t / m.life) * 0.55, 0, 1); disc(c, m.x, m.y, m.r, m.r, '#f4f2ee'); c.globalAlpha = 1; });
+  }
+  function specialMark(c, x, y, kind) { // crown for the double-patty fan, stopwatch for the rushed worker; (x, y) = bottom centre
+    if (kind === 'double') {
+      R(c, x - 9, y - 6, 18, 7, INK); R(c, x - 8, y - 5, 16, 5, '#ffd23a'); R(c, x - 8, y - 2, 16, 1, '#e0a010');
+      [[-8, 0], [-1, 0], [6, 0]].forEach(([dx]) => { R(c, x + dx - 1, y - 11, 4, 6, INK); R(c, x + dx, y - 10, 2, 5, '#ffd23a'); });
+      R(c, x - 2, y - 4, 3, 2, '#e8302a'); R(c, x - 7, y - 4, 2, 2, '#3a8ad8'); R(c, x + 5, y - 4, 2, 2, '#3a8ad8');
+    } else {
+      disc(c, x, y - 6, 7, 7, INK); disc(c, x, y - 6, 6, 6, '#fff6e8'); R(c, x - 1, y - 15, 3, 3, INK); R(c, x, y - 10, 1, 4, INK); R(c, x, y - 6, 4, 1, '#e8302a');
+    }
   }
   function drawTicket(c) {
     const x = 8, y = 108, w = 116, h = 156;
@@ -735,9 +751,10 @@
     const b = s.banner; if (!b) return;
     const k = b.t / b.dur, a = k < 0.15 ? k / 0.15 : k > 0.8 ? (1 - k) / 0.2 : 1;
     c.globalAlpha = clamp(a, 0, 1);
-    const w = tw(b.text, 12) * 2 + 40;
-    R(c, 240 - w / 2, 108, w, 34, 'rgba(20,10,10,.85)'); R(c, 240 - w / 2, 108, w, 2, '#ffd27a'); R(c, 240 - w / 2, 140, w, 2, '#ffd27a');
-    T(c, b.text, 240, 113, 12, '#fff2c0', '#5a2a08', 'c', 2);
+    const w = Math.max(tw(b.text, 12) * 2, b.sub ? tw(b.sub, 10) : 0) + 40, h = b.sub ? 50 : 34;
+    R(c, 240 - w / 2, 108, w, h, 'rgba(20,10,10,.88)'); R(c, 240 - w / 2, 108, w, 2, '#ffd27a'); R(c, 240 - w / 2, 106 + h, w, 2, '#ffd27a');
+    T(c, b.text, 240, 113, 12, b.col || '#fff2c0', '#5a2a08', 'c', 2);
+    if (b.sub) T(c, b.sub, 240, 142, 10, '#ffe9c0', null, 'c');
     c.globalAlpha = 1;
   }
   function drawToast(c) {
