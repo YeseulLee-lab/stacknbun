@@ -82,8 +82,8 @@
   }
   function stageInfo(n) {
     const d = STAGES[(n - 1) % STAGES.length];
-    if (!P.map) newDayMap();
-    const map = Object.assign({}, P.map);
+    // never write the save from here: this also runs on page load, before 이어하기 reads the save
+    const map = Object.assign({}, P.map || { up: 'lettuce', down: 'patty', left: 'cheese', right: 'tomato' });
     const changed = {};
     if (P.prevMap) DIRS.forEach(k => { if (P.prevMap[k] !== map[k]) changed[k] = true; });
     const cnt = n <= 10 ? COUNT[n - 1] : [7, 8];
@@ -879,7 +879,7 @@
   // FLOW
   // =====================================================
   function newGame() { P = fresh(); newDayMap(); sfx('ok'); showOpen(); }
-  function continueGame() { const o = loadSave(); if (o) P = o; sfx('ok'); showOpen(); }
+  function continueGame() { const o = loadSave(); if (o) P = o; if (!P.map || (P.fresh && P.fresh.length)) newDayMap(); sfx('ok'); showOpen(); }
   function showOpen() {
     s.info = stageInfo(P.stage); markDirty(); s.eve = false; s.biz = null;
     s.panel = { kind: 'open', sel: 0 }; sfx('sel');
